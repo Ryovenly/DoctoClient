@@ -21,15 +21,17 @@ const Signup = () => {
 
   return (
     <>
+    <h1>DoctoClient</h1>
+
       <h2>S'inscrire</h2>
       <div>
         {error ? <div>{error}</div> : null}
-        <form onSubmit={handleSubmit}>
+        <form className="signupForm" onSubmit={handleSubmit}>
           <input
             type="email"
             name="email"
             value={email}
-            placeholder="Your Email"
+            placeholder="Email"
             required
             onChange={(e) => setEmail(e.target.value)}
           />
@@ -37,7 +39,7 @@ const Signup = () => {
             type="password"
             name="password"
             value={password}
-            placeholder="Your Password"
+            placeholder="Mot de passe"
             required
             onChange={(e) => setPassword(e.target.value)}
           />
@@ -45,7 +47,7 @@ const Signup = () => {
             type="password"
             name="password2"
             value={password2}
-            placeholder="Confirm your Password"
+            placeholder="Confirmer Mot de passe"
             required
             onChange={(e) => setPassword2(e.target.value)}
           />

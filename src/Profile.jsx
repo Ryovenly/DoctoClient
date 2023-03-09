@@ -54,7 +54,7 @@ const [doctors, setDoctors] = useState([]);
 
 const fetchDoctor = async () => {
        
-    await getDocs(collection(firestore, "Doctor"))
+    await getDocs(collection(firestore, "Doctors"))
         .then((querySnapshot)=>{              
             const newData = querySnapshot.docs
                 .map((doc) => ({...doc.data(), id:doc.id }));

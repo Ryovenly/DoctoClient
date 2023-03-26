@@ -1,13 +1,13 @@
 import { useContext,useState,useEffect } from "react";
 //import AuthContext from "./AuthContext";
 import * as React from 'react';
-
 import { useNavigate, Navigate } from "react-router-dom";
 //import signOut from './handles/handlesubmit';
 import { getAuth, signOut } from 'firebase/auth';
-import { collection, getDocs, setDoc, doc  } from "firebase/firestore";
+import { collection, getDocs,getDoc , setDoc, doc  } from "firebase/firestore";
 //import Signout from "./handles/Signout";
 import {firestore} from './firebase';
+import {patientConverter} from './Patient';
 
   
 const logout = () => {
@@ -31,6 +31,41 @@ const [adresse, setAdresse] = useState("");
 const ToDoctorPage = () => {
   navigate("/doctor");
 };
+
+const [user, setUser] = useState({});
+
+
+  useEffect(() => {
+
+    currentData();
+
+  }, [])
+
+const currentData = async () => {
+
+  try {
+
+    const auth = getAuth();
+    const currentUser = auth.currentUser.uid;
+    const docRef = doc(firestore,"Patients", currentUser).withConverter(patientConverter)
+    const docSnap = await getDoc(docRef);
+    if(docSnap.exists()) {
+        console.log(docSnap.data());
+        const patient = docSnap.data();
+        setAdresse(patient.adresse);
+        setCity(patient.city);
+        setFirstname(patient.firstname);
+        setLastname(patient.lastname);
+    } else {
+        console.log("Document does not exist")
+    }
+
+} catch(error) {
+    console.log(error)
+}
+
+
+}
 
 const addPatient = async (e) => {
   e.preventDefault();  

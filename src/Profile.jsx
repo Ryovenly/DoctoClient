@@ -1,130 +1,112 @@
 import { useContext,useState,useEffect } from "react";
-import AuthContext from "./AuthContext";
+//import AuthContext from "./AuthContext";
 import * as React from 'react';
 
 import { useNavigate, Navigate } from "react-router-dom";
 //import signOut from './handles/handlesubmit';
 import { getAuth, signOut } from 'firebase/auth';
-import { collection, getDocs  } from "firebase/firestore";
+import { collection, getDocs, setDoc, doc  } from "firebase/firestore";
 //import Signout from "./handles/Signout";
 import {firestore} from './firebase';
 
-import Paper from '@mui/material/Paper';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TablePagination from '@mui/material/TablePagination';
-import TableRow from '@mui/material/TableRow';
-
-
-const columns = [
-    { id: 'firstname', label: 'Prénom' },
-    { id: 'lastname', label: 'Nom' },
-    { id: 'city', label: 'Ville' },
-  ];
   
 const logout = () => {
     const auth = getAuth();
 
     signOut(auth);
-    return <Navigate replace to="/" />;
   };
-  
+
 
 const Profile = () => {
-  const { user } = useContext(AuthContext);
+  //const { user } = useContext(AuthContext);
   const navigate = useNavigate();
 
+const [doctor, setDoctor] = useState("");
+const [firstname, setFirstname] = useState("");
+const [lastname, setLastname] = useState("");
+const [city, setCity] = useState("");
+const [adresse, setAdresse] = useState("");
+//const [user, setUser] = useState("");
 
-const [page, setPage] = React.useState(0);
-const [rowsPerPage, setRowsPerPage] = React.useState(10);
-
-const handleChangePage = (event, newPage) => {
-  setPage(newPage);
+const ToDoctorPage = () => {
+  navigate("/doctor");
 };
 
-const handleChangeRowsPerPage = (event) => {
-  setRowsPerPage(+event.target.value);
-  setPage(0);
-};
-
-const [doctors, setDoctors] = useState([]);
-
-const fetchDoctor = async () => {
-       
-    await getDocs(collection(firestore, "Doctors"))
-        .then((querySnapshot)=>{              
-            const newData = querySnapshot.docs
-                .map((doc) => ({...doc.data(), id:doc.id }));
-                setDoctors(newData);                
-            console.log(doctors, newData);
-        })
-   
+const addPatient = async (e) => {
+  e.preventDefault();  
+  const auth = getAuth();
+  try {
+      const docRef = await setDoc(doc(firestore, "Patients",auth.currentUser.uid), {
+        firstname: firstname,   
+        lastname: lastname, 
+        city: city,
+        adresse: adresse
+      });
+      console.log("Patient bien ajouté: ");
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
 }
 
-  useEffect(() => {
 
-    fetchDoctor();
+const updateDoctor = async (e) => {
+    e.preventDefault();  
+   
+    try {
+        const docRef = await addDoc(collection(firestore, "Doctors"), {
+          firstName: firstName,   
+          lastName: lastName, 
+          city: city,  
+        });
+        console.log("Document written with ID: ", docRef.id);
+      } catch (e) {
+        console.error("Error adding document: ", e);
+      }
+}
 
-  }, [])
-
-  if (!user) {
-    return <Navigate replace to="/login" />;
-  }
   return (
     <>
-      <h1>Docteurs</h1>
+      <h1>Vos données</h1>
 
-<Paper sx={{ width: '100%', overflow: 'hidden' }}>
-      <TableContainer sx={{ maxHeight: 440 }}>
-        <Table stickyHeader aria-label="sticky table">
-          <TableHead>
-            <TableRow>
-              {columns.map((column) => (
-                <TableCell
-                  key={column.id}
-                  align={column.align}
-                  style={{ minWidth: column.minWidth }}
-                >
-                  {column.label}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {doctors
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((doctor) => {
-                return (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={doctor.id}>
-                    {columns.map((column) => {
-                      const value = doctor[column.id];
-                      return (
-                        <TableCell key={column.id} align={column.align}>
-                          {column.format && typeof value === 'number'
-                            ? column.format(value)
-                            : value}
-                        </TableCell>
-                      );
-                    })}
-                  </TableRow>
-                );
-              })}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <TablePagination
-        rowsPerPageOptions={[10, 25, 100]}
-        component="div"
-        count={doctors.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
-    </Paper>
+
+        <form className="signupForm" onSubmit={addPatient}>
+          <input
+            type="name"
+            name="firstname"
+            value={firstname}
+            placeholder="Prénom"
+            required
+            onChange={(e) => setFirstname(e.target.value)}
+          />
+          <input
+            type="name"
+            name="lastname"
+            value={lastname}
+            placeholder="Nom"
+            required
+            onChange={(e) => setLastname(e.target.value)}
+          />
+          <input
+            type="name"
+            name="city"
+            value={city}
+            placeholder="Ville"
+            required
+            onChange={(e) => setCity(e.target.value)}
+          />
+          <input
+            type="name"
+            name="adresse"
+            value={adresse}
+            placeholder="Adresse"
+            required
+            onChange={(e) => setAdresse(e.target.value)}
+          />
+          <button type="submit">Valider</button>
+        </form>
+
+
+<button onClick={ToDoctorPage}>Voir les docteurs</button>
 
  <button onClick={logout}>Se déconnecter</button>
     </>

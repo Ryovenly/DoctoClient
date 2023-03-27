@@ -22,6 +22,10 @@ import { useNavigate, Navigate } from "react-router-dom";
       error,
     ] = useSignInWithEmailAndPassword(auth);
   
+    if (error){
+      navigator.vibrate(500);
+    }
+
     if (error) {
       return (
         <div>

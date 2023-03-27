@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { signUp } from "./firebase";
+// import {ButtonMailto} from "./ButtonMailto"
+
 const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -41,6 +43,9 @@ useEffect(() => {
     }
     promptInstall.prompt();
   };
+//   if (!supportsPWA) {
+//     return null;
+//   }
 
 // let deferredPrompt;
 //     window.addEventListener('beforeinstallprompt', (e) => {
@@ -62,8 +67,7 @@ useEffect(() => {
     <>
     <h1>DoctoClient</h1>
     <button onClick={onClick} id="installApp">Install</button>
-
-      <h2>S'inscrire</h2>
+    <button onClick={() => window.location = 'mailto:yourmail@domain.com'}>Contact Me</button>      <h2>S'inscrire</h2>
       <div>
         {error ? <div>{error}</div> : null}
         <form className="signupForm" onSubmit={handleSubmit}>

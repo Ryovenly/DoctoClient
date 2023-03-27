@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { signUp } from "./firebase";
 const Signup = () => {
@@ -19,9 +19,49 @@ const Signup = () => {
     }
   };
 
+const [supportsPWA, setSupportsPWA] = useState(false);
+const [promptInstall, setPromptInstall] = useState(null);
+
+useEffect(() => {
+    const handler = e => {
+      e.preventDefault();
+      console.log("we are being triggered :D");
+      setSupportsPWA(true);
+      setPromptInstall(e);
+    };
+    window.addEventListener("beforeinstallprompt", handler);
+
+    return () => window.removeEventListener("transitionend", handler);
+  }, []);
+
+  const onClick = evt => {
+    evt.preventDefault();
+    if (!promptInstall) {
+      return;
+    }
+    promptInstall.prompt();
+  };
+
+// let deferredPrompt;
+//     window.addEventListener('beforeinstallprompt', (e) => {
+//         deferredPrompt = e;
+//     });
+
+//     const installApp = document.getElementById('installApp');
+//     installApp.addEventListener('click', async () => {
+//         if (deferredPrompt !== null) {
+//             deferredPrompt.prompt();
+//             const { outcome } = await deferredPrompt.userChoice;
+//             if (outcome === 'accepted') {
+//                 deferredPrompt = null;
+//             }
+//         }
+//     });
+
   return (
     <>
     <h1>DoctoClient</h1>
+    <button onClick={onClick} id="installApp">Install</button>
 
       <h2>S'inscrire</h2>
       <div>
